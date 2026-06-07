@@ -6,6 +6,22 @@ body:
     attributes:
       value: |
         Thanks for reporting a bug! Please fill out the sections below.
+  - type: markdown
+    attributes:
+      value: |
+        ### Before reporting
+
+        Please check the following:
+
+        - Does the MCP server connect? (e.g. `connected` in Claude Code's `/mcp`)
+        - Do tool calls succeed? (the agent can call a tool like `getProjects`)
+
+        If it fails at either step, the error is often surfaced on the agent side
+        that launches the MCP server — not by mcp-testrail itself.
+        Please find the error/log there and paste it in **Actual Behavior** below.
+
+        - Claude Code: https://docs.claude.com/en/docs/claude-code/troubleshooting
+        - Cursor: https://cursor.com/en-US/docs/mcp
   - type: textarea
     id: description
     attributes:

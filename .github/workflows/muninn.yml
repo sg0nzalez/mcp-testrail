@@ -22,7 +22,7 @@ jobs:
         id: muninn
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fail-on: high
+          fail-on: info
           format: sarif,comment
 
       - name: Upload SARIF

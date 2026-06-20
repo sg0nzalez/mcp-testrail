@@ -1,5 +1,5 @@
 version: 1
-fail-on: high
+fail-on: info
 
 scanners:
   gitleaks:

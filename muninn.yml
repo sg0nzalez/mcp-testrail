@@ -1,0 +1,32 @@
+version: 1
+fail-on: high
+
+scanners:
+  gitleaks:
+    enabled: true
+  zizmor:
+    enabled: true
+  actionlint:
+    enabled: true
+  poutine:
+    enabled: true
+  semgrep:
+    enabled: true
+    rulesets:
+      - p/security-audit
+      - p/secrets
+  osv-scanner:
+    enabled: true
+  trivy:
+    enabled: true
+    ignore-unfixed: true
+  checkov:
+    enabled: true
+
+suppressions:
+  - id: .env.example
+    reason: Placeholder TestRail credentials for local setup documentation.
+    expires: ""
+  - id: test/
+    reason: Mock API credentials in unit tests.
+    expires: ""

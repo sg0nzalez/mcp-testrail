@@ -1,0 +1,39 @@
+name: Muninn Security Scan
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  muninn:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: skaldlab/muninn@v0.3.3
+        id: muninn
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on: high
+          format: sarif,comment
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.muninn.outputs.sarif-path }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Found ${{ steps.muninn.outputs.findings-count }} issues"
+          echo "Critical: ${{ steps.muninn.outputs.critical-count }}"
+          echo "High: ${{ steps.muninn.outputs.high-count }}"

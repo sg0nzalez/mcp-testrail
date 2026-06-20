@@ -14,26 +14,19 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
 
-      - uses: skaldlab/muninn@v0.3.3
-        id: muninn
+      - name: Run Muninn
+        uses: skaldlab/muninn@de7174d6a498900ad104cd1e09f0077ac600a588 # v0.3.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fail-on: info
           format: sarif,comment
 
       - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('muninn.sarif') != ''
+        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4
         with:
-          sarif_file: ${{ steps.muninn.outputs.sarif-path }}
-
-      - name: Summary
-        if: always()
-        run: |
-          echo "Found ${{ steps.muninn.outputs.findings-count }} issues"
-          echo "Critical: ${{ steps.muninn.outputs.critical-count }}"
-          echo "High: ${{ steps.muninn.outputs.high-count }}"
+          sarif_file: muninn.sarif

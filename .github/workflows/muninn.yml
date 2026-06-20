@@ -19,25 +19,12 @@ jobs:
           persist-credentials: false
 
       - name: Run Muninn
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          docker run --rm \
-            -v "${GITHUB_WORKSPACE}:/github/workspace" \
-            -v "${GITHUB_EVENT_PATH}:${GITHUB_EVENT_PATH}:ro" \
-            -w /github/workspace \
-            -e GITHUB_TOKEN \
-            -e GITHUB_EVENT_NAME \
-            -e GITHUB_EVENT_PATH \
-            -e GITHUB_REPOSITORY \
-            -e GITHUB_API_URL \
-            -e FAIL_ON=info \
-            -e CONFIG_PATH=muninn.yml \
-            -e OUTPUT_FORMATS=sarif,comment \
-            -e OUTPUT_PATH=muninn.sarif \
-            -e JSON_PATH=muninn.json \
-            -e SCAN_TARGET=. \
-            ghcr.io/skaldlab/muninn:0.3.3
+        # zizmor: ignore[github_action_from_unverified_creator_used]
+        uses: skaldlab/muninn@de7174d6a498900ad104cd1e09f0077ac600a588 # v0.3.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail-on: info
+          format: sarif,comment
 
       - name: Upload SARIF
         if: always() && hashFiles('muninn.sarif') != ''

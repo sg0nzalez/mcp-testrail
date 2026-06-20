@@ -30,3 +30,9 @@ suppressions:
   - id: test/
     reason: Mock API credentials in unit tests.
     expires: ""
+  - id: .github/workflows/muninn.yml
+    rule-id: github_action_from_unverified_creator_used
+    reason: >
+      Skald Lab Muninn is this project's security scanner; Marketplace
+      publisher verification is pending.
+    expires: ""

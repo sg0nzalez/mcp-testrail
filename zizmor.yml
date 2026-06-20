@@ -1,0 +1,5 @@
+rules:
+  cache-poisoning:
+    ignore:
+      # setup-node sets cache: false; zizmor still flags tag-triggered release workflows.
+      - release.yml

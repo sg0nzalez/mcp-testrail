@@ -2,11 +2,6 @@ name: E2E Test
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: "Branch to test"
-        required: false
-        default: "main"
 
 permissions:
   contents: read
@@ -18,16 +13,17 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
+          persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "lts/*"
+          cache: false
 
-      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1
         with:
           bot-id: "BT01KPGC0DQQM4GSQJXHGAJ7C87G"
 
@@ -41,7 +37,7 @@ jobs:
         run: npm run build
 
       - name: Setup TestRail API key
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@51705da45eecce209d4700538bf8377d5b5fc695 # v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           show_full_output: true
@@ -51,7 +47,7 @@ jobs:
             --max-turns 100
 
       - name: Run E2E tests
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@51705da45eecce209d4700538bf8377d5b5fc695 # v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           show_full_output: true

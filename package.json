@@ -35,8 +35,12 @@
     "@modelcontextprotocol/sdk": "^1.27.1",
     "axios": "^1.16.0",
     "dotenv": "^16.4.5",
-    "form-data": "^4.0.0",
+    "form-data": "^4.0.6",
     "zod": "^3.24.2"
+  },
+  "overrides": {
+    "form-data": "^4.0.6",
+    "hono": "^4.12.26"
   },
   "engines": {
     "node": ">=20.18.1"

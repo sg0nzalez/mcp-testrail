@@ -5,6 +5,9 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
+permissions:
+  contents: read
+
 jobs:
   release:
     permissions:
@@ -15,19 +18,20 @@ jobs:
     steps:
       - name: Get semantic version
         id: semver
-        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
+          cache: false
 
-      - uses: flatt-security/setup-takumi-guard-npm@v1
+      - uses: flatt-security/setup-takumi-guard-npm@9a5d797c2085b6326d3a2985c08e3a114b9b88c1 # v1
         with:
           bot-id: "BT01KPGC0DQQM4GSQJXHGAJ7C87G"
 
@@ -37,23 +41,26 @@ jobs:
           git config user.email 'action@github.com'
 
       - name: Update package version
-        run: npm version ${{ steps.semver.outputs.version }} --no-git-tag-version
+        env:
+          VERSION: ${{ steps.semver.outputs.version }}
+        run: npm version "$VERSION" --no-git-tag-version
 
       - name: install
         run: npm ci
 
       - name: Upgrade npm
         run: npm install -g npm@latest
-      
+
       - name: build
         run: npm run build
-      
+
       - name: Publish to npm
         run: npm publish --provenance --access public --registry https://registry.npmjs.org
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           title: "Update package version to ${{ steps.semver.outputs.version }}"
           body: "Automated PR to update package version"
           branch: "update-version-${{ steps.semver.outputs.version }}"
@@ -64,8 +71,7 @@ jobs:
             package-lock.json
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ steps.semver.outputs.version }}
-          name: Release v${{ steps.semver.outputs.version }}
-          generate_release_notes: true
+        env:
+          VERSION: ${{ steps.semver.outputs.version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "v${VERSION}" --title "Release v${VERSION}" --generate-notes
